@@ -1,14 +1,15 @@
+import Order from "../../../domain/checkout/entity/order"
+import OrderItem from "../../../domain/checkout/entity/order_item"
+import OrderItemFactory from "../../../domain/checkout/factory/order-item.factory"
 import OrderFactory from "../../../domain/checkout/factory/order.factory"
 import OrderRepositoryInterface from "../../../domain/checkout/repository/order-repository.interface"
+import OrderService from "../../../domain/checkout/service/order.service"
+import CustomerRepositoryInterface from "../../../domain/customer/repository/customer-repository.interface"
 import { InputCreateOrderDto, OutputCreateOrderDto } from "./create.order.dto"
 
 export default class CreateOrderUseCase {
 
-  private orderRepository: OrderRepositoryInterface
-
-  constructor(orderRepository: OrderRepositoryInterface) {
-    this.orderRepository = orderRepository
-  }
+  constructor(private orderRepository: OrderRepositoryInterface, private customerRepository: CustomerRepositoryInterface) { }
 
   async execute(input: InputCreateOrderDto): Promise<OutputCreateOrderDto> {
 
@@ -18,15 +19,22 @@ export default class CreateOrderUseCase {
       items: input.items.map((item) => ({
         id: item.id,
         name: item.name,
-        price: item.price,
         productId: item.productId,
-        quantity: item.quantity
+        quantity: item.quantity,
+        price: item.price
       }))
     }
 
     const order = OrderFactory.create(props)
 
-    await this.orderRepository.create(order)
+    const customer = await this.customerRepository.find(input.customerId)
+
+    const orderService = OrderService.placeOrder(customer, [order.items])
+
+    await Promise.all([
+      this.orderRepository.create(order),
+      this.customerRepository.create(customer)
+    ])
 
     return {
       id: order.id,

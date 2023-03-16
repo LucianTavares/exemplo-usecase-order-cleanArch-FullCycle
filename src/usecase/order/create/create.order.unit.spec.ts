@@ -1,7 +1,6 @@
-import { number } from "yup"
 import CreateOrderUseCase from "./create.order.usecase"
 
-const inputOrderItem = {
+const inputOrderItemOne = {
   id: "1",
   productId: "1",
   productName: "DDD",
@@ -9,16 +8,16 @@ const inputOrderItem = {
   quantity: 1
 }
 
-const inputOrder = {
+const inputOrderOne = {
   id: "1",
   customerId: "1",
   items: [
     {
-      id: inputOrderItem.id,
-      name: inputOrderItem.productName,
-      price: inputOrderItem.productPrice,
-      productId: inputOrderItem.productId,
-      quantity: inputOrderItem.quantity
+      id: inputOrderItemOne.id,
+      name: inputOrderItemOne.productName,
+      price: inputOrderItemOne.productPrice,
+      productId: inputOrderItemOne.productId,
+      quantity: inputOrderItemOne.quantity
     }
   ]
 }
@@ -38,15 +37,16 @@ describe("Unit test create order use case", () => {
   it("should create a order", async () => {
 
     const orderRepository = MockRepository()
-    const orderCreateUseCase = new CreateOrderUseCase(orderRepository)
+    const customerRepository = MockRepository()
+    const orderCreateUseCase = new CreateOrderUseCase(orderRepository, customerRepository)
 
-    const output = await orderCreateUseCase.execute(inputOrder)
+    const output = await orderCreateUseCase.execute(inputOrderOne)
 
     expect(output).toEqual({
       id: expect.any(String),
-      customerId: expect.any(String),
+      customerId: inputOrderOne.customerId,
       total: expect.any(Number),
-      items: inputOrder.items.map((item) => ({
+      items: inputOrderOne.items.map((item) => ({
         id: item.id,
         name: item.name,
         price: item.price,
@@ -54,5 +54,7 @@ describe("Unit test create order use case", () => {
         quantity: item.quantity
       }))
     })
+
+    expect(output.total).toBe(59.90)
   })
 })

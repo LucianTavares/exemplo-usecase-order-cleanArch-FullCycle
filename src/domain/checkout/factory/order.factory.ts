@@ -8,8 +8,8 @@ interface OrderFactoryProps {
     id: string,
     name: string,
     productId: string,
-    quantity: number,
     price: number
+    quantity: number,
   }[]
 }
 

@@ -3,7 +3,7 @@ import OrderFactory from './order.factory'
 
 describe("Order factory unit test", () => {
 
-  it("should create an order", () => {
+  it("should create an order", async () => {
 
     const orderProps = {
       id: uuid(),
