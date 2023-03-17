@@ -7,8 +7,8 @@ describe("Order items factory unit test", () => {
 
     const orderItemProps = {
       id: uuid(),
-      name: "DDD",
       productId: uuid(),
+      name: "DDD",
       price: 100,
       quantity: 1
     }
@@ -18,7 +18,7 @@ describe("Order items factory unit test", () => {
     expect(orderItem.id).toBeDefined()
     expect(orderItem.name).toBe("DDD")
     expect(orderItem.productId).toBeDefined()
-    expect(orderItem.quantity).toBe(1)
     expect(orderItem.price).toBe(100)
+    expect(orderItem.quantity).toBe(1)
   })
 })

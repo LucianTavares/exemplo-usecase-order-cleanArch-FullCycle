@@ -6,8 +6,6 @@ export default class Order {
   private _customerId: string;
   private _items: OrderItem[];
   private _total: number;
-  order: OrderItem;
-  order: OrderItem;
 
   constructor(id: string, customerId: string, items: OrderItem[]) {
     this._id = id;

@@ -1,10 +1,11 @@
 export interface InputCreateOrderDto {
   id: string,
   customerId: string,
+  customerName: string,
   items: {
     id: string,
-    name: string,
     productId: string,
+    name: string,
     price: number,
     quantity: number
   }[]
@@ -16,9 +17,10 @@ export interface OutputCreateOrderDto {
   total: number,
   items: {
     id: string,
+    productId: string,
     name: string,
     price: number,
-    productId: string,
     quantity: number
-  }[]
+  }[],
+  rewardPointsCustomer: number
 }

@@ -6,8 +6,8 @@ interface OrderFactoryProps {
   customerId: string
   items: {
     id: string,
-    name: string,
     productId: string,
+    name: string,
     price: number
     quantity: number,
   }[]

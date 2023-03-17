@@ -1,9 +1,7 @@
-import Order from "../../../domain/checkout/entity/order"
-import OrderItem from "../../../domain/checkout/entity/order_item"
-import OrderItemFactory from "../../../domain/checkout/factory/order-item.factory"
 import OrderFactory from "../../../domain/checkout/factory/order.factory"
 import OrderRepositoryInterface from "../../../domain/checkout/repository/order-repository.interface"
 import OrderService from "../../../domain/checkout/service/order.service"
+import CustomerFactory from "../../../domain/customer/factory/customer.factory"
 import CustomerRepositoryInterface from "../../../domain/customer/repository/customer-repository.interface"
 import { InputCreateOrderDto, OutputCreateOrderDto } from "./create.order.dto"
 
@@ -16,25 +14,27 @@ export default class CreateOrderUseCase {
     const props = {
       id: input.id,
       customerId: input.customerId,
+      customerName: input.customerName,
       items: input.items.map((item) => ({
         id: item.id,
-        name: item.name,
         productId: item.productId,
+        name: item.name,
         quantity: item.quantity,
         price: item.price
       }))
     }
 
     const order = OrderFactory.create(props)
+    const customer = CustomerFactory.create(props.customerName)
 
-    const customer = await this.customerRepository.find(input.customerId)
-
-    const orderService = OrderService.placeOrder(customer, [order.items])
+    const customerFind = await this.customerRepository.find(order.customerId)
 
     await Promise.all([
       this.orderRepository.create(order),
-      this.customerRepository.create(customer)
+      this.customerRepository.create(customerFind)
     ])
+    
+    const orderService = OrderService.placeOrder(customer, [order.items[0]])
 
     return {
       id: order.id,
@@ -42,11 +42,12 @@ export default class CreateOrderUseCase {
       total: order.total(),
       items: order.items.map((item) => ({
         id: item.id,
+        productId: item.productId,
         name: item.name,
         price: item.price,
-        productId: item.productId,
         quantity: item.quantity
-      }))
+      })),
+      rewardPointsCustomer: customer.rewardPoints
     }
   }
 }
