@@ -28,10 +28,10 @@ export default class Order {
   }
 
   validate(): boolean {
-    if (this._id.length === 0) {
+    if (!this._id) {
       throw new Error("Id is required")
     }
-    if (this._customerId.length === 0) {
+    if (!this._customerId) {
       throw new Error("CustomerId is required")
     }
     if (this._items.length === 0) {

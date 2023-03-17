@@ -1,9 +1,7 @@
 export interface InputCreateOrderDto {
-  id: string,
   customerId: string,
   customerName: string,
   items: {
-    id: string,
     productId: string,
     name: string,
     price: number,
