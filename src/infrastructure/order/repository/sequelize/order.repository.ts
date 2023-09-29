@@ -1,6 +1,8 @@
 import Order from "../../../../domain/checkout/entity/order";
 import OrderItem from "../../../../domain/checkout/entity/order_item";
 import OrderRepositoryInterface from "../../../../domain/checkout/repository/order-repository.interface";
+import Customer from "../../../../domain/customer/entity/customer";
+import CustomerModel from "../../../customer/repository/sequelize/customer.model";
 import OrderItemModel from "./order-item.model";
 import OrderModel from "./order.model";
 
@@ -64,6 +66,34 @@ export default class OrderRepository implements OrderRepositoryInterface {
         orderItem.price,
         orderItem.quantity
       ))
+    )
+  }
+
+  async findCustomerById(id: string): Promise<Order[]> {
+
+    const customer_id = await CustomerModel.findOne({
+      where: { id }
+    })
+
+    const orderModel = await OrderModel.findAll({
+      where: { customer_id: customer_id },
+      include: [{ model: OrderItemModel }]
+    })
+
+    console.log(orderModel)
+
+    return orderModel.map(order =>
+      new Order(
+        order.id,
+        order.customer_id,
+        order.items.map(orderItem => new OrderItem(
+          orderItem.id,
+          orderItem.product_id,
+          orderItem.name,
+          orderItem.price,
+          orderItem.quantity
+        ))
+      )
     )
   }
 

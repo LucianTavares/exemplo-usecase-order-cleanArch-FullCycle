@@ -1,8 +1,6 @@
 import OrderItemFactory from "../../../domain/checkout/factory/order-item.factory"
-import OrderFactory from "../../../domain/checkout/factory/order.factory"
 import OrderRepositoryInterface from "../../../domain/checkout/repository/order-repository.interface"
 import OrderService from "../../../domain/checkout/service/order.service"
-import CustomerFactory from "../../../domain/customer/factory/customer.factory"
 import CustomerRepositoryInterface from "../../../domain/customer/repository/customer-repository.interface"
 import { InputCreateOrderDto, OutputCreateOrderDto } from "./create.order.dto"
 
@@ -18,10 +16,8 @@ export default class CreateOrderUseCase {
     }))
 
     const customer = await this.customerRepository.find(input.customerId)
-    console.log(customer)
 
     const order = OrderService.placeOrder(customer, items)
-
 
     await Promise.all([
       this.orderRepository.create(order),
